@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: pingStats
+      POSTGRES_PASSWORD: pingStats
+      POSTGRES_DB: pingStats
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  ping:
+    build: ./ping
+    environment:
+      DB_HOST: db
+      DB_NAME: pingStats
+      DB_USER: pingStats
+      DB_PASS: pingStats
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+  makeping:
+    build: ./makeping
+    command: ["python", "makePing.py", "5", "http://ping:80/uptime"]
+    depends_on:
+      - ping
+
+volumes:
+  db_data:
