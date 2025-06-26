@@ -1,0 +1,36 @@
+name: zad6-app
+
+services:
+  ping:
+    image: ghcr.io/swierczu/ping:skoczylas-filip-1
+    ports:
+      - "8080:80"
+
+  makeping: 
+    # image: ghcr.io/swierczu/makeping:skoczylas-filip-3
+    build:
+      context: .
+    env_file: .env
+    # environment:
+      # MAKEPING_INTERVAL: 2
+      # MAKEPING_URL: http://ping/uptime
+    depends_on:
+      - ping
+
+  console:
+    image: ubuntu
+    volumes:
+      - "data:/backup"
+
+  db:
+    image: postgres:latest
+    env_file: .env
+    volumes:
+      - ./pgdata2:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+
+volumes:
+  data: 
+  pgdata2:
+  db-data:

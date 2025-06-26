@@ -1,6 +1,7 @@
 import requests
 import time
 import sys
+import os
 
 def make_ping(interval, url):
     while True:
@@ -22,13 +23,9 @@ def make_ping(interval, url):
         time.sleep(interval)
 
 def main():
-    if len(sys.argv) != 3:
-        print("Użycie: python makePing.py <interwał_w_sekundach> <URL>")
-        sys.exit(1)
-    
     try:
-        interval = int(sys.argv[1])
-        url = sys.argv[2]
+        interval = int(os.getenv("MAKEPING_INTERVAL"))
+        url = os.getenv("MAKEPING_URL")
         
         make_ping(interval, url)
     
